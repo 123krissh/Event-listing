@@ -1,7 +1,7 @@
 body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
-  background: #f4f6f9;
+  background: linear-gradient(to right, #ddd8f5, #b2aec2, #afafb4); 
   color: #333;
 }
 
@@ -83,7 +83,7 @@ body {
 .event-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
@@ -102,7 +102,7 @@ body {
 }
 
 .event-card h3 {
-  font-size: 20px;
+  font-size: 17px;
   margin: 16px 16px 8px;
   line-height: 1.2;
 }
