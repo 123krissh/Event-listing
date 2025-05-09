@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Listing - Sydney</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <header class="main-header">
+  <div class="header-content">
+    <div class="header-text">
+      <h1>🎫 Explore Events in Sydney</h1>
+      <p>Discover the latest concerts, festivals, and meetups happening near you.</p>
+      <button onclick="goEvent()"> Explore Events </button>
+    </div>
+    <div class="header-image">
+      <img src="/assets/bg.png" alt="Events in Sydney">
+    </div>
+  </div>
+</header>
+
+  <main>
+    <div id="events" class="events-container">
+      <% if (events.length === 0) { %>
+        <p>No events found at the moment.</p>
+      <% } else { %>
+        <% events.forEach(event => { %>
+          <div class="event-card">
+            <img src="<%= event.image %>" alt="Event image">
+            <h3><%= event.title %></h3>
+            <p><strong> <i class="fas fa-calendar-alt"></i> Date:</strong> <%= event.date %></p>
+            <p><strong> <i class="fas fa-map-marker-alt"></i> Location:</strong> <%= event.location %></p>
+            <button onclick="openModal('<%= event.link %>')">GET TICKETS</button>
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+  </main>
+
+  <!-- Email Modal -->
+  <div id="emailModal" class="modal">
+    <div class="modal-content">
+      <h3>Enter Your Valid Email ID</h3>
+      <input type="email" id="emailInput" placeholder="you@example.com" required />
+      <br>
+      <button onclick="submitEmail()">Submit</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2025 Event Listing. All rights reserved.</p>
+      <button onclick="goHome()"><i class="material-icons">home</i></button>
+    </div>
+  </footer>
+
+  <script>
+    let redirectURL = '';
+
+    function openModal(link) {
+      redirectURL = link;
+      document.getElementById('emailModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('emailModal').style.display = 'none';
+      document.getElementById('emailInput').value = '';
+    }
+
+    function submitEmail() {
+      const email = document.getElementById('emailInput').value;
+      if (!email || !email.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      fetch('/log-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      }).then(res => {
+        if (res.ok) {
+          closeModal();
+          window.open(redirectURL, '_blank');
+        } else {
+          alert('Failed to submit email.');
+        }
+      }).catch(() => {
+        alert('Server error.');
+      });
+    }
+
+    function goHome() {
+      window.location.href = '/';  // Redirects to the home screen (root URL)
+    }
+
+    function goEvent() {
+      const eventSection = document.getElementById('events');
+      if (eventSection) {
+      eventSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('emailModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
+
+</body>
+</html>
