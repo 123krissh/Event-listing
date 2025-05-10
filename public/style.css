@@ -80,6 +80,11 @@ body {
   margin: auto;
 }
 
+.event-heading{
+  text-align: center;
+  margin-top: 3rem;
+}
+
 .event-card {
   background: #fff;
   border-radius: 12px;
