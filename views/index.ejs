@@ -42,7 +42,7 @@
     </div>
   </main>
 
-  <!-- Email Modal -->
+  <!-- Email Modal
   <div id="emailModal" class="modal">
     <div class="modal-content">
       <h3>Enter Your Valid Email ID</h3>
@@ -51,7 +51,30 @@
       <button onclick="submitEmail()">Submit</button>
       <button onclick="closeModal()">Cancel</button>
     </div>
+  </div> -->
+
+  <!-- Email Modal -->
+<div id="emailModal" class="modal">
+  <div class="modal-content">
+    <h3>Enter Your Email</h3>
+    <input type="email" id="emailInput" placeholder="you@example.com" required />
+    <br>
+    <button onclick="requestOTP()">Send OTP</button>
+    <button onclick="closeModal()">Cancel</button>
   </div>
+</div>
+
+<!-- OTP Modal -->
+<div id="otpModal" class="modal">
+  <div class="modal-content">
+    <h3>Enter the OTP sent to your email</h3>
+    <input type="text" id="otpInput" maxlength="6" placeholder="6-digit OTP" required />
+    <br>
+    <button onclick="verifyOTP()">Verify & Continue</button>
+    <button onclick="closeOtpModal()">Cancel</button>
+  </div>
+</div>
+
 
   <!-- Footer -->
   <footer>
@@ -62,61 +85,73 @@
   </footer>
 
   <script>
-    let redirectURL = '';
+  let redirectURL = '';
 
-    function openModal(link) {
-      redirectURL = link;
-      document.getElementById('emailModal').style.display = 'flex';
+  function openModal(link) {
+    redirectURL = link;
+    document.getElementById('emailModal').style.display = 'flex';
+  }
+
+  function closeModal() {
+    document.getElementById('emailModal').style.display = 'none';
+    document.getElementById('emailInput').value = '';
+  }
+
+  function closeOtpModal() {
+    document.getElementById('otpModal').style.display = 'none';
+    document.getElementById('otpInput').value = '';
+  }
+
+  function requestOTP() {
+    const email = document.getElementById('emailInput').value;
+    if (!email || !email.includes('@')) {
+      alert('Please enter a valid email address.');
+      return;
     }
 
-    function closeModal() {
-      document.getElementById('emailModal').style.display = 'none';
-      document.getElementById('emailInput').value = '';
-    }
-
-    function submitEmail() {
-      const email = document.getElementById('emailInput').value;
-      if (!email || !email.includes('@')) {
-        alert('Please enter a valid email address.');
-        return;
-      }
-
-      fetch('/log-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email })
-      }).then(res => {
-        if (res.ok) {
-          closeModal();
-          window.open(redirectURL, '_blank');
-        } else {
-          alert('Failed to submit email.');
-        }
-      }).catch(() => {
-        alert('Server error.');
-      });
-    }
-
-    function goHome() {
-      window.location.href = '/';  // Redirects to the home screen (root URL)
-    }
-
-    function goEvent() {
-      const eventSection = document.getElementById('events');
-      if (eventSection) {
-      eventSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    }
-
-    window.onclick = function(event) {
-      const modal = document.getElementById('emailModal');
-      if (event.target === modal) {
+    fetch('/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    }).then(res => {
+      if (res.ok) {
         closeModal();
+        document.getElementById('otpModal').style.display = 'flex';
+      } else {
+        alert('Failed to send OTP.');
       }
-    }
-  </script>
+    });
+  }
+
+  function verifyOTP() {
+    const otp = document.getElementById('otpInput').value;
+    fetch('/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ otp })
+    }).then(res => {
+      if (res.ok) {
+        closeOtpModal();
+        window.open(redirectURL, '_blank');
+      } else {
+        alert('Invalid OTP.');
+      }
+    });
+  }
+
+  function goEvent() {
+    document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function goHome() {
+    window.location.href = '/';
+  }
+
+  window.onclick = function(event) {
+    if (event.target === document.getElementById('emailModal')) closeModal();
+    if (event.target === document.getElementById('otpModal')) closeOtpModal();
+  };
+</script>
 
 </body>
 </html>

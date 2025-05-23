@@ -267,6 +267,8 @@ footer button:hover {
   .events-container {
     padding: 12px;
     gap: 16px;
+    display: flex;
+    
   }
 
   .event-card {
